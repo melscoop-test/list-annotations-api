@@ -21,7 +21,8 @@ jobs:
             images:
               - alt: Test image
                 image_url: https://octodex.github.com/images/jetpacktocat.png
-
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Download file
       - uses: octokit/request-action@v2.x
         id: download_file
@@ -31,7 +32,8 @@ jobs:
           repo: request-action
           mediaType: | # The | is significant!
             format: raw
-
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Update check run to completed, successful status
       - uses: octokit/request-action@v2.x
         id: update_check_run
@@ -42,3 +44,5 @@ jobs:
           check_run_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
           conclusion: "success"
           status: "completed"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
