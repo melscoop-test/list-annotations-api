@@ -31,7 +31,7 @@ jobs:
       with:
         route: GET /repos/${{ env.GITHUB_REPOSITORY }}/actions/runs
         params: |
-          workflow_id: ${{ item.id }}
+          workflow_id: ${{ jobs.id }}
         headers: |
           Accept: ${{ env.ACCEPT }}
           Authorization: ${{ env.AUTHORIZATION }}
@@ -42,7 +42,7 @@ jobs:
       uses: octokit/request-action@v2
       id: annotations
       with:
-        route: GET ${{ item.check_run_url }}/annotations
+        route: GET ${{ jobs.check_run_url }}/annotations
         headers: |
           Accept: ${{ env.ACCEPT }}
           Authorization: ${{ env.AUTHORIZATION }}
