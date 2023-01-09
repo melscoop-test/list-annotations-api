@@ -13,6 +13,8 @@ jobs:
       AUTHORIZATION: token ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+
+    # Query the workflows for the current repository
     - name: Query workflows
       uses: octokit/request-action@v2
       with:
@@ -21,8 +23,8 @@ jobs:
           Accept: ${{ env.ACCEPT }}
           Authorization: ${{ env.AUTHORIZATION }}
       id: workflows
-  
-  # Loop through the workflows and fetch the jobs for each workflow
+    
+    # Loop through the workflows and fetch the jobs for each workflow
     - name: Fetch jobs for each workflow
       uses: octokit/request-action@v2
       id: jobs
@@ -34,8 +36,8 @@ jobs:
           Accept: ${{ env.ACCEPT }}
           Authorization: ${{ env.AUTHORIZATION }}
         forEach: ${{ steps.workflows.data }}
-  
-  # List the annotations for each check run
+    
+    # List the annotations for each check run
     - name: List annotations for each check run
       uses: octokit/request-action@v2
       id: annotations
@@ -45,4 +47,4 @@ jobs:
           Accept: ${{ env.ACCEPT }}
           Authorization: ${{ env.AUTHORIZATION }}
         forEach: ${{ steps.jobs.data }}
-  
+    
