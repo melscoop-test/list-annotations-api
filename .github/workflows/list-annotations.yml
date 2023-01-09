@@ -1,0 +1,17 @@
+# This is a basic action to run a bash script that will list annotations
+
+name: List Annotations
+
+on: workflow_dispatch
+
+jobs:
+
+  list-annotations:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - name: run the local shell script
+        run: ./list-annotations.sh
