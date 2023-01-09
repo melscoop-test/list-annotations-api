@@ -12,21 +12,21 @@ jobs:
     steps:
     - name: Fetch Workflow Runs
       id: fetch_runs
-      uses: actions/rest-api-toolkit@v2
+      uses: actions/toolkit@v2
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         query: 'workflow:"My Workflow"'
 
     - name: Fetch Jobs for Workflow Run
       id: fetch_jobs
-      uses: actions/rest-api-toolkit@v2
+      uses: actions/toolkit@v2
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         run-id: ${{ steps.fetch_runs.outputs.data[0].id }}
 
     - name: List Annotations
       id: list_annotations
-      uses: actions/rest-api-toolkit@v2
+      uses: actions/toolkit@v2
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         check-run-url: ${{ steps.fetch_jobs.outputs.data[0].check_run_url }}
