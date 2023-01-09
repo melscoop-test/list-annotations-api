@@ -1,4 +1,4 @@
-# This is a basic action to run a bash script that will list annotations
+# This is a basic action to list annotations
 
 name: List Annotations
 
@@ -8,17 +8,26 @@ jobs:
 
   list-annotations:
     runs-on: ubuntu-latest
-
+    
     steps:
+    - name: Fetch Workflow Runs
+      id: fetch_runs
+      uses: actions/rest-api-toolkit@v2
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        query: 'workflow:"My Workflow"'
 
-      - uses: actions/checkout@v3
+    - name: Fetch Jobs for Workflow Run
+      id: fetch_jobs
+      uses: actions/rest-api-toolkit@v2
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        run-id: ${{ steps.fetch_runs.outputs.data[0].id }}
 
-
-      - name: set executable permissions for the script
-        run: chmod +x list-annotations.sh
-
-          
-      - name: run the list annotations script
-        run: |
-          chmod +x list-annotations.sh
-          ./list-annotations.sh
+    - name: List Annotations
+      id: list_annotations
+      uses: actions/rest-api-toolkit@v2
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        check-run-url: ${{ steps.fetch_jobs.outputs.data[0].check_run_url }}
+ 
