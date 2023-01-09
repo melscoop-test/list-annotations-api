@@ -8,13 +8,11 @@ jobs:
 
   list-annotations:
     runs-on: ubuntu-latest
-  env:
-  ACCEPT: application/vnd.github+json
-  AUTHORIZATION: token ${{ secrets.GITHUB_TOKEN }}
+    env:
+      ACCEPT: application/vnd.github+json
+      AUTHORIZATION: token ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-       
-    # Query the workflows for the current repository
     - name: Query workflows
       uses: octokit/request-action@v2
       with:
@@ -35,7 +33,7 @@ jobs:
         headers: |
           Accept: ${{ env.ACCEPT }}
           Authorization: ${{ env.AUTHORIZATION }}
-      forEach: ${{ steps.workflows.data }}
+        forEach: ${{ steps.workflows.data }}
   
   # List the annotations for each check run
     - name: List annotations for each check run
@@ -46,5 +44,5 @@ jobs:
         headers: |
           Accept: ${{ env.ACCEPT }}
           Authorization: ${{ env.AUTHORIZATION }}
-      forEach: ${{ steps.jobs.data }}
+        forEach: ${{ steps.jobs.data }}
   
