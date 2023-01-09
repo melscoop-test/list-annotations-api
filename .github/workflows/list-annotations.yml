@@ -8,26 +8,43 @@ jobs:
 
   list-annotations:
     runs-on: ubuntu-latest
-    
+  env:
+  ACCEPT: application/vnd.github+json
+  AUTHORIZATION: token ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-    - name: Fetch Workflow Runs
-      id: fetch_runs
-      uses: actions/toolkit@v2
+       
+    # Query the workflows for the current repository
+    - name: Query workflows
+      uses: octokit/request-action@v2
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        query: 'workflow:"My Workflow"'
-
-    - name: Fetch Jobs for Workflow Run
-      id: fetch_jobs
-      uses: actions/toolkit@v2
+        route: GET /repos/${{ env.GITHUB_REPOSITORY }}/actions/workflows
+        headers: |
+          Accept: ${{ env.ACCEPT }}
+          Authorization: ${{ env.AUTHORIZATION }}
+      id: workflows
+  
+  # Loop through the workflows and fetch the jobs for each workflow
+    - name: Fetch jobs for each workflow
+      uses: octokit/request-action@v2
+      id: jobs
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        run-id: ${{ steps.fetch_runs.outputs.data[0].id }}
-
-    - name: List Annotations
-      id: list_annotations
-      uses: actions/toolkit@v2
+        route: GET /repos/${{ env.GITHUB_REPOSITORY }}/actions/runs
+        params: |
+          workflow_id: ${{ item.id }}
+        headers: |
+          Accept: ${{ env.ACCEPT }}
+          Authorization: ${{ env.AUTHORIZATION }}
+      forEach: ${{ steps.workflows.data }}
+  
+  # List the annotations for each check run
+    - name: List annotations for each check run
+      uses: octokit/request-action@v2
+      id: annotations
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        check-run-url: ${{ steps.fetch_jobs.outputs.data[0].check_run_url }}
- 
+        route: GET ${{ item.check_run_url }}/annotations
+        headers: |
+          Accept: ${{ env.ACCEPT }}
+          Authorization: ${{ env.AUTHORIZATION }}
+      forEach: ${{ steps.jobs.data }}
+  
